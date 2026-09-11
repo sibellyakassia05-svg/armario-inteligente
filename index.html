@@ -1,0 +1,3055 @@
+
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SMART CLOSET AI</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+
+        :root {
+            --background: #03050d;
+            --card: rgba(11, 18, 35, 0.75);
+            --primary: #00e5ff;
+            --secondary: #7b61ff;
+            --pink: #ff3cac;
+            --text: #f4f7ff;
+            --text-secondary: #8d99b5;
+            --border: rgba(0, 229, 255, 0.18);
+            --success: #00ffb2;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Poppins", sans-serif;
+            background: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* FUNDO FUTURISTA */
+
+        .background {
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(0, 229, 255, 0.08), transparent 30%),
+                radial-gradient(circle at 80% 30%, rgba(123, 97, 255, 0.1), transparent 30%),
+                radial-gradient(circle at 50% 80%, rgba(255, 60, 172, 0.05), transparent 35%);
+            z-index: -3;
+        }
+
+        .grid {
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0, 229, 255, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 229, 255, 0.04) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -2;
+        }
+
+        .particles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background-image:
+                radial-gradient(circle, rgba(255,255,255,.5) 1px, transparent 1px);
+            background-size: 70px 70px;
+            opacity: .25;
+            z-index: -1;
+            animation: particlesMove 20s linear infinite;
+        }
+
+        @keyframes particlesMove {
+            from {
+                transform: translateY(0);
+            }
+
+            to {
+                transform: translateY(-70px);
+            }
+        }
+
+        /* LOADING */
+
+        #loadingScreen {
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(circle, #0c1630, #02040b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity .8s ease, visibility .8s ease;
+        }
+
+        #loadingScreen.hide {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loading-content {
+            text-align: center;
+        }
+
+        .loading-logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: auto;
+            font-size: 50px;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            box-shadow:
+                0 0 20px var(--primary),
+                inset 0 0 20px rgba(0,229,255,.3);
+            animation: pulse 1.5s infinite;
+        }
+
+        .loading-content h1 {
+            font-family: "Orbitron";
+            margin-top: 30px;
+            letter-spacing: 5px;
+            font-size: 30px;
+        }
+
+        .loading-content p {
+            color: var(--text-secondary);
+            margin-top: 10px;
+            letter-spacing: 2px;
+            font-size: 11px;
+        }
+
+        .loading-bar {
+            width: 300px;
+            height: 4px;
+            background: rgba(255,255,255,.1);
+            margin-top: 30px;
+            overflow: hidden;
+        }
+
+        .loading-progress {
+            width: 100%;
+            height: 100%;
+            background:
+                linear-gradient(90deg, var(--secondary), var(--primary));
+            transform-origin: left;
+            animation: loading 2s ease forwards;
+        }
+
+        @keyframes loading {
+            from {
+                transform: scaleX(0);
+            }
+
+            to {
+                transform: scaleX(1);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.08);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* APP */
+
+        .app-container {
+            width: min(1500px, 95%);
+            margin: auto;
+            padding-bottom: 40px;
+        }
+
+        /* HEADER */
+
+        .header {
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            font-size: 25px;
+            color: var(--primary);
+            border: 1px solid var(--border);
+            box-shadow: 0 0 20px rgba(0,229,255,.2);
+        }
+
+        .logo h1 {
+            font-family: "Orbitron";
+            font-size: 21px;
+            letter-spacing: 2px;
+        }
+
+        .logo h1 span {
+            color: var(--primary);
+        }
+
+        .logo p {
+            color: var(--text-secondary);
+            font-size: 9px;
+            letter-spacing: 2px;
+        }
+
+        .system-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: "Orbitron";
+            font-size: 10px;
+            color: var(--success);
+        }
+
+        .status-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 10px var(--success);
+        }
+
+        /* DASHBOARD */
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            min-height: 700px;
+            padding: 25px;
+            border-radius: 20px;
+            background: rgba(8, 14, 28, .8);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(20px);
+        }
+
+        .profile-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            font-size: 22px;
+            background:
+                linear-gradient(135deg, var(--secondary), var(--primary));
+        }
+
+        .profile-card h3 {
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        .profile-card p {
+            font-size: 10px;
+            color: var(--text-secondary);
+        }
+
+        .menu {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .menu-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border: none;
+            cursor: pointer;
+            border-radius: 10px;
+            background: transparent;
+            color: var(--text-secondary);
+            font-family: "Orbitron";
+            font-size: 10px;
+            text-align: left;
+            transition: .3s;
+        }
+
+        .menu-btn:hover {
+            background: rgba(0,229,255,.06);
+            color: var(--primary);
+        }
+
+        .menu-btn.active {
+            color: var(--primary);
+            background: rgba(0,229,255,.08);
+            border: 1px solid var(--border);
+        }
+
+        .sidebar-bottom {
+            margin-top: 50px;
+        }
+
+        .clothes-counter {
+            text-align: center;
+            padding: 25px 10px;
+            border-radius: 15px;
+            background: rgba(0,0,0,.2);
+        }
+
+        .clothes-counter span {
+            display: block;
+            font-family: "Orbitron";
+            font-size: 32px;
+            color: var(--primary);
+        }
+
+        .clothes-counter p {
+            margin-top: 5px;
+            color: var(--text-secondary);
+            font-size: 9px;
+            letter-spacing: 1px;
+        }
+
+        /* CONTEÚDO */
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+            animation: sectionAppear .5s ease;
+        }
+
+        @keyframes sectionAppear {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* BOAS-VINDAS */
+
+        .welcome {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .system-text {
+            color: var(--primary);
+            font-family: "Orbitron";
+            font-size: 9px;
+            letter-spacing: 2px;
+        }
+
+        .welcome h2 {
+            margin-top: 10px;
+            font-size: 32px;
+        }
+
+        .welcome p {
+            color: var(--text-secondary);
+        }
+
+        .ai-orb {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background:
+                radial-gradient(circle, rgba(0,229,255,.2), rgba(0,229,255,.02));
+            border: 1px solid var(--border);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .orb-core {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background:
+                radial-gradient(circle, white, var(--primary));
+            box-shadow:
+                0 0 20px var(--primary),
+                0 0 60px var(--primary);
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        /* IA PANEL */
+
+        .ai-panel {
+            padding: 30px;
+            border-radius: 20px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(20px);
+        }
+
+        .ai-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ai-title {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .ai-icon {
+            width: 45px;
+            height: 45px;
+            display: grid;
+            place-items: center;
+            border-radius: 10px;
+            color: var(--primary);
+            background: rgba(0,229,255,.08);
+        }
+
+        .ai-title h3 {
+            font-family: "Orbitron";
+            font-size: 13px;
+        }
+
+        .ai-title p {
+            color: var(--text-secondary);
+            font-size: 11px;
+        }
+
+        .ai-status {
+            font-family: "Orbitron";
+            font-size: 9px;
+            color: var(--success);
+        }
+
+        .ai-status span {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            background: var(--success);
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .ai-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .option {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option label,
+        .form-group label {
+            font-family: "Orbitron";
+            font-size: 9px;
+            color: var(--text-secondary);
+            letter-spacing: 1px;
+        }
+
+        select,
+        input {
+            width: 100%;
+            padding: 13px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            outline: none;
+            color: var(--text);
+            background: rgba(0,0,0,.25);
+            font-family: "Poppins";
+        }
+
+        select option {
+            background: #07101f;
+        }
+
+        .generate-btn {
+            width: 100%;
+            margin-top: 25px;
+            padding: 17px;
+            border: none;
+            cursor: pointer;
+            border-radius: 12px;
+            color: #001016;
+            font-family: "Orbitron";
+            font-weight: 700;
+            letter-spacing: 1px;
+            background:
+                linear-gradient(90deg, var(--primary), #73f6ff);
+            box-shadow:
+                0 0 30px rgba(0,229,255,.25);
+            transition: .3s;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow:
+                0 0 45px rgba(0,229,255,.5);
+        }
+
+        /* LOOK */
+
+        .look-section {
+            margin-top: 35px;
+        }
+
+        .section-title,
+        .page-header {
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .section-title p,
+        .page-header p {
+            font-family: "Orbitron";
+            font-size: 9px;
+            color: var(--text-secondary);
+            letter-spacing: 2px;
+        }
+
+        .section-title h2,
+        .page-header h2 {
+            margin-top: 5px;
+            font-family: "Orbitron";
+            font-size: 22px;
+        }
+
+        .scan-text {
+            color: var(--success);
+            font-family: "Orbitron";
+            font-size: 9px;
+        }
+
+        .look-display {
+            min-height: 350px;
+            padding: 30px;
+            border-radius: 20px;
+            background:
+                linear-gradient(145deg, rgba(10,18,35,.9), rgba(3,6,15,.8));
+            border: 1px solid var(--border);
+        }
+
+        .empty-look {
+            height: 290px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .empty-icon {
+            font-size: 55px;
+            margin-bottom: 15px;
+        }
+
+        .empty-look h3 {
+            font-family: "Orbitron";
+            font-size: 14px;
+        }
+
+        .empty-look p {
+            max-width: 400px;
+            margin-top: 10px;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .generated-look {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 20px;
+        }
+
+        .look-item {
+            padding: 12px;
+            border-radius: 15px;
+            background: rgba(255,255,255,.03);
+            border: 1px solid rgba(255,255,255,.06);
+            text-align: center;
+            animation: lookAppear .5s ease;
+        }
+
+        @keyframes lookAppear {
+            from {
+                opacity: 0;
+                transform: scale(.8);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .look-item img {
+            width: 100%;
+            height: 170px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .look-placeholder {
+            height: 170px;
+            display: grid;
+            place-items: center;
+            border-radius: 10px;
+            font-size: 60px;
+            background:
+                linear-gradient(145deg, rgba(0,229,255,.08), rgba(123,97,255,.08));
+        }
+
+        .look-item h4 {
+            margin-top: 12px;
+            font-size: 12px;
+        }
+
+        .look-item p {
+            color: var(--primary);
+            font-size: 9px;
+            margin-top: 3px;
+            text-transform: uppercase;
+        }
+
+        .look-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .secondary-btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            color: var(--text);
+            background: rgba(255,255,255,.03);
+            border: 1px solid var(--border);
+            font-family: "Orbitron";
+            font-size: 10px;
+            transition: .3s;
+        }
+
+        .secondary-btn:hover {
+            background: rgba(0,229,255,.08);
+            color: var(--primary);
+        }
+
+        /* ARMÁRIO */
+
+        .page-header {
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .add-btn {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            color: #001016;
+            font-family: "Orbitron";
+            font-size: 10px;
+            font-weight: bold;
+            background:
+                linear-gradient(90deg, var(--primary), #7cf5ff);
+        }
+
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .filter-btn {
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            background: transparent;
+            border: 1px solid rgba(255,255,255,.08);
+            font-family: "Orbitron";
+            font-size: 9px;
+        }
+
+        .filter-btn.active {
+            color: var(--primary);
+            border-color: var(--primary);
+            background: rgba(0,229,255,.06);
+        }
+
+        .clothes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+            gap: 20px;
+        }
+
+        .clothes-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            background: rgba(8,14,28,.8);
+            border: 1px solid rgba(255,255,255,.07);
+            transition: .3s;
+        }
+
+        .clothes-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--border);
+        }
+
+        .clothes-image {
+            height: 210px;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+            background:
+                linear-gradient(145deg, rgba(0,229,255,.08), rgba(123,97,255,.05));
+        }
+
+        .clothes-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .clothes-placeholder {
+            font-size: 65px;
+        }
+
+        .clothes-info {
+            padding: 15px;
+        }
+
+        .clothes-info h3 {
+            font-size: 13px;
+        }
+
+        .clothes-info p {
+            margin-top: 5px;
+            font-size: 9px;
+            color: var(--primary);
+            text-transform: uppercase;
+        }
+
+        .clothes-info span {
+            display: block;
+            margin-top: 4px;
+            font-size: 9px;
+            color: var(--text-secondary);
+        }
+
+        .delete-clothes {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 32px;
+            height: 32px;
+            border: none;
+            cursor: pointer;
+            border-radius: 50%;
+            color: white;
+            background: rgba(255,40,70,.85);
+            opacity: 0;
+            transition: .3s;
+        }
+
+        .clothes-card:hover .delete-clothes {
+            opacity: 1;
+        }
+
+        .empty-closet {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 100px 20px;
+            border: 1px dashed var(--border);
+            border-radius: 20px;
+        }
+
+        .empty-closet h3 {
+            font-family: "Orbitron";
+        }
+
+        .empty-closet p {
+            margin-top: 10px;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        /* FAVORITOS */
+
+        .favorites-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        .favorite-look {
+            padding: 20px;
+            border-radius: 18px;
+            background: rgba(8,14,28,.8);
+            border: 1px solid var(--border);
+        }
+
+        .favorite-look h3 {
+            font-family: "Orbitron";
+            font-size: 12px;
+            color: var(--primary);
+        }
+
+        .favorite-items {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .favorite-mini {
+            width: 55px;
+            height: 55px;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+            border-radius: 10px;
+            background: rgba(255,255,255,.05);
+        }
+
+        .favorite-mini img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .delete-favorite {
+            margin-top: 20px;
+            padding: 9px 12px;
+            cursor: pointer;
+            border-radius: 8px;
+            color: #ff6b81;
+            background: transparent;
+            border: 1px solid rgba(255,80,100,.2);
+            font-family: "Orbitron";
+            font-size: 9px;
+        }
+
+        /* MODAL */
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(0,0,0,.75);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            position: relative;
+            width: min(600px, 100%);
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 35px;
+            border-radius: 20px;
+            background: #08101e;
+            border: 1px solid var(--border);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            border: none;
+            cursor: pointer;
+            color: var(--text-secondary);
+            background: transparent;
+            font-size: 30px;
+        }
+
+        .modal-title {
+            margin-bottom: 25px;
+        }
+
+        .modal-title p {
+            font-family: "Orbitron";
+            color: var(--primary);
+            font-size: 9px;
+            letter-spacing: 2px;
+        }
+
+        .modal-title h2 {
+            margin-top: 5px;
+            font-family: "Orbitron";
+            font-size: 20px;
+        }
+
+        /* FORMULÁRIO */
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .preview-container {
+            height: 180px;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            background: rgba(255,255,255,.03);
+            border: 1px dashed var(--border);
+        }
+
+        .preview-container img {
+            display: none;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        #defaultPreview {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            font-size: 45px;
+        }
+
+        #defaultPreview span {
+            color: var(--text-secondary);
+            font-size: 11px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            cursor: pointer;
+            border-radius: 10px;
+            color: #001016;
+            font-family: "Orbitron";
+            font-size: 10px;
+            font-weight: bold;
+            background: var(--primary);
+        }
+
+        /* NOTIFICAÇÃO */
+
+        .notification {
+            position: fixed;
+            right: 25px;
+            bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 20px;
+            border-radius: 12px;
+            background: #08101e;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 40px rgba(0,0,0,.5);
+            transform: translateX(150%);
+            transition: .4s;
+            z-index: 200;
+            font-size: 12px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        #notificationIcon {
+            color: var(--primary);
+        }
+
+        /* RESPONSIVO */
+
+        @media (max-width: 900px) {
+
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                min-height: auto;
+            }
+
+            .menu {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+
+            .menu-btn {
+                width: auto;
+            }
+
+            .sidebar-bottom {
+                display: none;
+            }
+
+        }
+
+        @media (max-width: 650px) {
+
+            .header {
+                height: auto;
+                padding: 20px 0;
+            }
+
+            .system-status {
+                display: none;
+            }
+
+            .ai-options {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header {
+                align-items: flex-start;
+                gap: 20px;
+                flex-direction: column;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .look-actions {
+                flex-direction: column;
+            }
+
+            .welcome h2 {
+                font-size: 25px;
+            }
+
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+    <div class="background"></div>
+    <div class="grid"></div>
+    <div class="particles"></div>
+
+
+    <!-- TELA DE CARREGAMENTO -->
+
+    <div id="loadingScreen">
+
+        <div class="loading-content">
+
+            <div class="loading-logo">
+                ✦
+            </div>
+
+            <h1>SMART CLOSET</h1>
+
+            <p>INICIALIZANDO SISTEMA DE MODA...</p>
+
+            <div class="loading-bar">
+
+                <div class="loading-progress"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- APLICATIVO -->
+
+    <main class="app-container">
+
+
+        <!-- HEADER -->
+
+        <header class="header">
+
+            <div class="logo">
+
+                <div class="logo-icon">
+                    ◈
+                </div>
+
+                <div>
+
+                    <h1>
+                        SMART <span>CLOSET</span>
+                    </h1>
+
+                    <p>
+                        INTELLIGENT FASHION SYSTEM
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="system-status">
+
+                <div class="status-dot"></div>
+
+                <span>
+                    SISTEMA ONLINE
+                </span>
+
+            </div>
+
+        </header>
+
+
+        <!-- DASHBOARD -->
+
+        <section class="dashboard">
+
+
+            <!-- MENU -->
+
+            <aside class="sidebar">
+
+
+                <div class="profile-card">
+
+                    <div class="avatar">
+                        👤
+                    </div>
+
+                    <div>
+
+                        <h3>USUÁRIO</h3>
+
+                        <p>
+                            Smart Fashion Profile
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <nav class="menu">
+
+                    <button
+                        class="menu-btn active"
+                        data-section="home"
+                    >
+
+                        ⌂ INÍCIO
+
+                    </button>
+
+
+                    <button
+                        class="menu-btn"
+                        data-section="closet"
+                    >
+
+                        ▣ MEU ARMÁRIO
+
+                    </button>
+
+
+                    <button
+                        class="menu-btn"
+                        data-section="favorites"
+                    >
+
+                        ♥ LOOKS SALVOS
+
+                    </button>
+
+                </nav>
+
+
+                <div class="sidebar-bottom">
+
+                    <div class="clothes-counter">
+
+                        <span id="totalClothes">
+                            0
+                        </span>
+
+                        <p>
+                            ROUPAS CADASTRADAS
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+            </aside>
+
+
+
+            <!-- CONTEÚDO -->
+
+            <section class="main-content">
+
+
+                <!-- HOME -->
+
+                <div
+                    id="home"
+                    class="content-section active"
+                >
+
+
+                    <div class="welcome">
+
+                        <div>
+
+                            <p class="system-text">
+
+                                SISTEMA DE INTELIGÊNCIA ARTIFICIAL
+
+                            </p>
+
+                            <h2>
+                                Olá! 👋
+                            </h2>
+
+                            <p>
+
+                                Sua inteligência de moda está pronta
+                                para criar o look perfeito.
+
+                            </p>
+
+                        </div>
+
+
+                        <div class="ai-orb">
+
+                            <div class="orb-core"></div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- PAINEL IA -->
+
+                    <div class="ai-panel">
+
+
+                        <div class="ai-header">
+
+                            <div class="ai-title">
+
+                                <div class="ai-icon">
+                                    ✦
+                                </div>
+
+                                <div>
+
+                                    <h3>
+                                        FASHION AI
+                                    </h3>
+
+                                    <p>
+
+                                        Analisando seu guarda-roupa
+
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="ai-status">
+
+                                <span></span>
+
+                                ONLINE
+
+                            </div>
+
+                        </div>
+
+
+
+                        <div class="ai-options">
+
+
+                            <div class="option">
+
+                                <label for="occasion">
+
+                                    OCASIÃO
+
+                                </label>
+
+                                <select id="occasion">
+
+                                    <option value="casual">
+                                        Casual
+                                    </option>
+
+                                    <option value="trabalho">
+                                        Trabalho
+                                    </option>
+
+                                    <option value="festa">
+                                        Festa
+                                    </option>
+
+                                    <option value="encontro">
+                                        Encontro
+                                    </option>
+
+                                    <option value="formal">
+                                        Formal
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+
+                            <div class="option">
+
+                                <label for="style">
+
+                                    ESTILO
+
+                                </label>
+
+                                <select id="style">
+
+                                    <option value="qualquer">
+                                        Surpreenda-me
+                                    </option>
+
+                                    <option value="casual">
+                                        Casual
+                                    </option>
+
+                                    <option value="elegante">
+                                        Elegante
+                                    </option>
+
+                                    <option value="moderno">
+                                        Moderno
+                                    </option>
+
+                                    <option value="romantico">
+                                        Romântico
+                                    </option>
+
+                                    <option value="esportivo">
+                                        Esportivo
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+
+                        <button
+                            id="generateLook"
+                            class="generate-btn"
+                        >
+
+                            ✦ GERAR LOOK COM IA
+
+                        </button>
+
+                    </div>
+
+
+
+                    <!-- LOOK -->
+
+                    <div class="look-section">
+
+
+                        <div class="section-title">
+
+                            <div>
+
+                                <p>
+                                    RECOMENDAÇÃO DA IA
+                                </p>
+
+                                <h2>
+                                    LOOK DE HOJE
+                                </h2>
+
+                            </div>
+
+                            <div class="scan-text">
+
+                                ● READY
+
+                            </div>
+
+                        </div>
+
+
+
+                        <div
+                            id="lookDisplay"
+                            class="look-display"
+                        >
+
+                            <div class="empty-look">
+
+                                <div class="empty-icon">
+                                    👗
+                                </div>
+
+                                <h3>
+                                    AGUARDANDO ANÁLISE...
+                                </h3>
+
+                                <p>
+
+                                    Escolha suas preferências e deixe
+                                    a IA criar sua combinação perfeita.
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <div class="look-actions">
+
+                            <button
+                                id="newLook"
+                                class="secondary-btn"
+                            >
+
+                                🔄 NOVO LOOK
+
+                            </button>
+
+
+                            <button
+                                id="saveLook"
+                                class="secondary-btn"
+                            >
+
+                                ♥ SALVAR LOOK
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- MEU ARMÁRIO -->
+
+                <div
+                    id="closet"
+                    class="content-section"
+                >
+
+
+                    <div class="page-header">
+
+                        <div>
+
+                            <p>
+                                SEU GUARDA-ROUPA DIGITAL
+                            </p>
+
+                            <h2>
+                                MEU ARMÁRIO
+                            </h2>
+
+                        </div>
+
+
+                        <button
+                            id="openAddClothes"
+                            class="add-btn"
+                        >
+
+                            + ADICIONAR ROUPA
+
+                        </button>
+
+                    </div>
+
+
+
+                    <!-- FILTROS -->
+
+                    <div class="filters">
+
+                        <button
+                            class="filter-btn active"
+                            data-filter="todos"
+                        >
+
+                            TODOS
+
+                        </button>
+
+
+                        <button
+                            class="filter-btn"
+                            data-filter="blusa"
+                        >
+
+                            BLUSAS
+
+                        </button>
+
+
+                        <button
+                            class="filter-btn"
+                            data-filter="calca"
+                        >
+
+                            CALÇAS
+
+                        </button>
+
+
+                        <button
+                            class="filter-btn"
+                            data-filter="vestido"
+                        >
+
+                            VESTIDOS
+
+                        </button>
+
+
+                        <button
+                            class="filter-btn"
+                            data-filter="sapato"
+                        >
+
+                            SAPATOS
+
+                        </button>
+
+
+                        <button
+                            class="filter-btn"
+                            data-filter="casaco"
+                        >
+
+                            CASACOS
+
+                        </button>
+
+
+                        <button
+                            class="filter-btn"
+                            data-filter="acessorio"
+                        >
+
+                            ACESSÓRIOS
+
+                        </button>
+
+                    </div>
+
+
+
+                    <!-- ROUPAS -->
+
+                    <div
+                        id="clothesGrid"
+                        class="clothes-grid"
+                    ></div>
+
+
+                </div>
+
+
+
+                <!-- FAVORITOS -->
+
+                <div
+                    id="favorites"
+                    class="content-section"
+                >
+
+
+                    <div class="page-header">
+
+                        <div>
+
+                            <p>
+                                SUAS COMBINAÇÕES
+                            </p>
+
+                            <h2>
+                                LOOKS SALVOS
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="favoritesGrid"
+                        class="favorites-grid"
+                    ></div>
+
+
+                </div>
+
+
+            </section>
+
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- MODAL -->
+
+    <div
+        id="clothesModal"
+        class="modal"
+    >
+
+        <div class="modal-content">
+
+
+            <button
+                id="closeModal"
+                class="close-modal"
+            >
+
+                ×
+
+            </button>
+
+
+            <div class="modal-title">
+
+                <p>
+                    NOVO ITEM
+                </p>
+
+                <h2>
+                    ADICIONAR ROUPA
+                </h2>
+
+            </div>
+
+
+
+            <form id="clothesForm">
+
+
+                <div class="form-group">
+
+                    <label>
+                        NOME DA ROUPA
+                    </label>
+
+                    <input
+                        type="text"
+                        id="clothesName"
+                        placeholder="Ex: Blusa preta"
+                        required
+                    >
+
+                </div>
+
+
+
+                <div class="form-row">
+
+
+                    <div class="form-group">
+
+                        <label>
+                            CATEGORIA
+                        </label>
+
+                        <select
+                            id="clothesCategory"
+                            required
+                        >
+
+                            <option value="blusa">
+                                Blusa
+                            </option>
+
+                            <option value="calca">
+                                Calça
+                            </option>
+
+                            <option value="vestido">
+                                Vestido
+                            </option>
+
+                            <option value="sapato">
+                                Sapato
+                            </option>
+
+                            <option value="casaco">
+                                Casaco
+                            </option>
+
+                            <option value="acessorio">
+                                Acessório
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+
+                    <div class="form-group">
+
+                        <label>
+                            ESTILO
+                        </label>
+
+                        <select id="clothesStyle">
+
+                            <option value="casual">
+                                Casual
+                            </option>
+
+                            <option value="elegante">
+                                Elegante
+                            </option>
+
+                            <option value="moderno">
+                                Moderno
+                            </option>
+
+                            <option value="romantico">
+                                Romântico
+                            </option>
+
+                            <option value="esportivo">
+                                Esportivo
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="form-group">
+
+                    <label>
+                        COR
+                    </label>
+
+                    <input
+                        type="text"
+                        id="clothesColor"
+                        placeholder="Ex: Preto"
+                    >
+
+                </div>
+
+
+
+                <div class="form-group">
+
+                    <label>
+                        FOTO DA ROUPA
+                    </label>
+
+                    <input
+                        type="file"
+                        id="clothesImage"
+                        accept="image/*"
+                    >
+
+                </div>
+
+
+
+                <div class="preview-container">
+
+                    <img
+                        id="imagePreview"
+                        src=""
+                        alt="Prévia da roupa"
+                    >
+
+                    <div id="defaultPreview">
+
+                        👕
+
+                        <span>
+                            Prévia da roupa
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+
+                <button
+                    type="submit"
+                    class="submit-btn"
+                >
+
+                    ✦ ADICIONAR AO ARMÁRIO
+
+                </button>
+
+
+            </form>
+
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- NOTIFICAÇÃO -->
+
+    <div
+        id="notification"
+        class="notification"
+    >
+
+        <span id="notificationIcon">
+            ✦
+        </span>
+
+        <span id="notificationText">
+
+            Sistema atualizado!
+
+        </span>
+
+    </div>
+
+
+
+    <!-- JAVASCRIPT -->
+
+    <script>
+
+        // =====================================
+        // ELEMENTOS
+        // =====================================
+
+        const loadingScreen =
+            document.getElementById("loadingScreen");
+
+        const clothesModal =
+            document.getElementById("clothesModal");
+
+        const openAddClothes =
+            document.getElementById("openAddClothes");
+
+        const closeModal =
+            document.getElementById("closeModal");
+
+        const clothesForm =
+            document.getElementById("clothesForm");
+
+        const clothesName =
+            document.getElementById("clothesName");
+
+        const clothesCategory =
+            document.getElementById("clothesCategory");
+
+        const clothesStyle =
+            document.getElementById("clothesStyle");
+
+        const clothesColor =
+            document.getElementById("clothesColor");
+
+        const clothesImage =
+            document.getElementById("clothesImage");
+
+        const imagePreview =
+            document.getElementById("imagePreview");
+
+        const defaultPreview =
+            document.getElementById("defaultPreview");
+
+        const clothesGrid =
+            document.getElementById("clothesGrid");
+
+        const favoritesGrid =
+            document.getElementById("favoritesGrid");
+
+        const totalClothes =
+            document.getElementById("totalClothes");
+
+        const generateLookButton =
+            document.getElementById("generateLook");
+
+        const newLookButton =
+            document.getElementById("newLook");
+
+        const saveLookButton =
+            document.getElementById("saveLook");
+
+        const lookDisplay =
+            document.getElementById("lookDisplay");
+
+        const occasion =
+            document.getElementById("occasion");
+
+        const style =
+            document.getElementById("style");
+
+        const notification =
+            document.getElementById("notification");
+
+        const notificationText =
+            document.getElementById("notificationText");
+
+
+        // =====================================
+        // DADOS
+        // =====================================
+
+        let clothes = JSON.parse(
+            localStorage.getItem("smartClosetClothes")
+        ) || [];
+
+
+        let favorites = JSON.parse(
+            localStorage.getItem("smartClosetFavorites")
+        ) || [];
+
+
+        let currentLook = [];
+
+        let currentFilter = "todos";
+
+
+        // =====================================
+        // ÍCONES
+        // =====================================
+
+        const categoryIcons = {
+
+            blusa: "👕",
+
+            calca: "👖",
+
+            vestido: "👗",
+
+            sapato: "👟",
+
+            casaco: "🧥",
+
+            acessorio: "👜"
+
+        };
+
+
+        // =====================================
+        // LOADING
+        // =====================================
+
+        window.addEventListener("load", () => {
+
+            setTimeout(() => {
+
+                loadingScreen.classList.add("hide");
+
+            }, 2200);
+
+        });
+
+
+        // =====================================
+        // MODAL
+        // =====================================
+
+        openAddClothes.addEventListener("click", () => {
+
+            clothesModal.classList.add("show");
+
+        });
+
+
+        closeModal.addEventListener("click", () => {
+
+            clothesModal.classList.remove("show");
+
+        });
+
+
+        clothesModal.addEventListener("click", (event) => {
+
+            if (event.target === clothesModal) {
+
+                clothesModal.classList.remove("show");
+
+            }
+
+        });
+
+
+        // =====================================
+        // PRÉVIA DA IMAGEM
+        // =====================================
+
+        clothesImage.addEventListener("change", () => {
+
+            const file = clothesImage.files[0];
+
+            if (!file) return;
+
+
+            const reader = new FileReader();
+
+
+            reader.onload = function(event) {
+
+                imagePreview.src = event.target.result;
+
+                imagePreview.style.display = "block";
+
+                defaultPreview.style.display = "none";
+
+            };
+
+
+            reader.readAsDataURL(file);
+
+        });
+
+
+        // =====================================
+        // ADICIONAR ROUPA
+        // =====================================
+
+        clothesForm.addEventListener("submit", (event) => {
+
+            event.preventDefault();
+
+
+            const newClothes = {
+
+                id: Date.now(),
+
+                name:
+                    clothesName.value.trim(),
+
+                category:
+                    clothesCategory.value,
+
+                style:
+                    clothesStyle.value,
+
+                color:
+                    clothesColor.value.trim(),
+
+                image:
+
+                    imagePreview.style.display === "block"
+
+                    ?
+
+                    imagePreview.src
+
+                    :
+
+                    ""
+
+            };
+
+
+            clothes.push(newClothes);
+
+
+            saveClothes();
+
+
+            renderClothes();
+
+
+            updateCounter();
+
+
+            clothesForm.reset();
+
+
+            imagePreview.src = "";
+
+            imagePreview.style.display = "none";
+
+            defaultPreview.style.display = "flex";
+
+
+            clothesModal.classList.remove("show");
+
+
+            showNotification(
+
+                "✦",
+
+                "Roupa adicionada ao armário!"
+
+            );
+
+        });
+
+
+        // =====================================
+        // SALVAR ROUPAS
+        // =====================================
+
+        function saveClothes() {
+
+            localStorage.setItem(
+
+                "smartClosetClothes",
+
+                JSON.stringify(clothes)
+
+            );
+
+        }
+
+
+        // =====================================
+        // MOSTRAR ROUPAS
+        // =====================================
+
+        function renderClothes() {
+
+
+            clothesGrid.innerHTML = "";
+
+
+            let filteredClothes = clothes;
+
+
+            if (currentFilter !== "todos") {
+
+                filteredClothes = clothes.filter((item) => {
+
+                    return item.category === currentFilter;
+
+                });
+
+            }
+
+
+            if (filteredClothes.length === 0) {
+
+                clothesGrid.innerHTML = `
+
+                    <div class="empty-closet">
+
+                        <div style="font-size:60px;margin-bottom:15px;">
+
+                            👗
+
+                        </div>
+
+                        <h3>
+                            SEU ARMÁRIO ESTÁ VAZIO
+                        </h3>
+
+                        <p>
+
+                            Adicione suas roupas para a IA começar
+                            a criar combinações incríveis.
+
+                        </p>
+
+                    </div>
+
+                `;
+
+                return;
+
+            }
+
+
+            filteredClothes.forEach((item) => {
+
+
+                const card =
+                    document.createElement("div");
+
+
+                card.classList.add(
+                    "clothes-card"
+                );
+
+
+                const icon =
+                    categoryIcons[item.category] || "👕";
+
+
+                card.innerHTML = `
+
+                    <button
+                        class="delete-clothes"
+                        data-id="${item.id}"
+                    >
+
+                        ×
+
+                    </button>
+
+
+                    <div class="clothes-image">
+
+                        ${
+
+                            item.image
+
+                            ?
+
+                            `<img src="${item.image}" alt="${item.name}">`
+
+                            :
+
+                            `<div class="clothes-placeholder">
+
+                                ${icon}
+
+                            </div>`
+
+                        }
+
+                    </div>
+
+
+                    <div class="clothes-info">
+
+                        <h3>
+
+                            ${item.name}
+
+                        </h3>
+
+                        <p>
+
+                            ${item.category}
+
+                        </p>
+
+                        <span>
+
+                            ${item.style}
+
+                            ${
+
+                                item.color
+
+                                ?
+
+                                " • " + item.color
+
+                                :
+
+                                ""
+
+                            }
+
+                        </span>
+
+                    </div>
+
+                `;
+
+
+                clothesGrid.appendChild(card);
+
+            });
+
+
+            document
+                .querySelectorAll(".delete-clothes")
+                .forEach((button) => {
+
+
+                    button.addEventListener("click", () => {
+
+                        const id =
+                            Number(button.dataset.id);
+
+
+                        deleteClothes(id);
+
+                    });
+
+
+                });
+
+        }
+
+
+        // =====================================
+        // EXCLUIR ROUPA
+        // =====================================
+
+        function deleteClothes(id) {
+
+
+            clothes = clothes.filter((item) => {
+
+                return item.id !== id;
+
+            });
+
+
+            saveClothes();
+
+
+            renderClothes();
+
+
+            updateCounter();
+
+
+            showNotification(
+
+                "🗑",
+
+                "Roupa removida do armário."
+
+            );
+
+        }
+
+
+        // =====================================
+        // CONTADOR
+        // =====================================
+
+        function updateCounter() {
+
+            totalClothes.textContent =
+                clothes.length;
+
+        }
+
+
+        // =====================================
+        // FILTROS
+        // =====================================
+
+        document
+            .querySelectorAll(".filter-btn")
+            .forEach((button) => {
+
+
+                button.addEventListener("click", () => {
+
+
+                    document
+                        .querySelectorAll(".filter-btn")
+                        .forEach((btn) => {
+
+                            btn.classList.remove("active");
+
+                        });
+
+
+                    button.classList.add("active");
+
+
+                    currentFilter =
+                        button.dataset.filter;
+
+
+                    renderClothes();
+
+
+                });
+
+            });
+
+
+        // =====================================
+        // GERAR LOOK
+        // =====================================
+
+        generateLookButton.addEventListener(
+            "click",
+            generateLook
+        );
+
+
+        newLookButton.addEventListener(
+            "click",
+            generateLook
+        );
+
+
+        function generateLook() {
+
+
+            if (clothes.length === 0) {
+
+
+                showNotification(
+
+                    "⚠",
+
+                    "Adicione roupas antes de gerar um look!"
+
+                );
+
+
+                return;
+
+            }
+
+
+            lookDisplay.innerHTML = `
+
+                <div class="empty-look">
+
+                    <div class="empty-icon">
+
+                        ✦
+
+                    </div>
+
+                    <h3>
+
+                        FASHION AI ANALISANDO...
+
+                    </h3>
+
+                    <p>
+
+                        Analisando cores, estilos e combinações.
+
+                    </p>
+
+                </div>
+
+            `;
+
+
+            setTimeout(() => {
+
+
+                currentLook = [];
+
+
+                const selectedStyle =
+                    style.value;
+
+
+                let blouses =
+                    clothes.filter(
+                        item => item.category === "blusa"
+                    );
+
+
+                let pants =
+                    clothes.filter(
+                        item => item.category === "calca"
+                    );
+
+
+                let dresses =
+                    clothes.filter(
+                        item => item.category === "vestido"
+                    );
+
+
+                let shoes =
+                    clothes.filter(
+                        item => item.category === "sapato"
+                    );
+
+
+                let jackets =
+                    clothes.filter(
+                        item => item.category === "casaco"
+                    );
+
+
+                let accessories =
+                    clothes.filter(
+                        item => item.category === "acessorio"
+                    );
+
+
+                // FILTRAR ESTILO
+
+                if (selectedStyle !== "qualquer") {
+
+
+                    blouses =
+                        filterByStyle(
+                            blouses,
+                            selectedStyle
+                        );
+
+
+                    pants =
+                        filterByStyle(
+                            pants,
+                            selectedStyle
+                        );
+
+
+                    dresses =
+                        filterByStyle(
+                            dresses,
+                            selectedStyle
+                        );
+
+
+                    shoes =
+                        filterByStyle(
+                            shoes,
+                            selectedStyle
+                        );
+
+
+                    jackets =
+                        filterByStyle(
+                            jackets,
+                            selectedStyle
+                        );
+
+
+                    accessories =
+                        filterByStyle(
+                            accessories,
+                            selectedStyle
+                        );
+
+                }
+
+
+                // VESTIDO
+
+                if (
+                    dresses.length > 0 &&
+                    Math.random() > 0.55
+                ) {
+
+                    currentLook.push(
+                        randomItem(dresses)
+                    );
+
+                }
+
+                else {
+
+                    if (blouses.length > 0) {
+
+                        currentLook.push(
+                            randomItem(blouses)
+                        );
+
+                    }
+
+
+                    if (pants.length > 0) {
+
+                        currentLook.push(
+                            randomItem(pants)
+                        );
+
+                    }
+
+                }
+
+
+                // SAPATO
+
+                if (shoes.length > 0) {
+
+                    currentLook.push(
+                        randomItem(shoes)
+                    );
+
+                }
+
+
+                // CASACO
+
+                if (
+                    jackets.length > 0 &&
+                    Math.random() > 0.5
+                ) {
+
+                    currentLook.push(
+                        randomItem(jackets)
+                    );
+
+                }
+
+
+                // ACESSÓRIO
+
+                if (
+                    accessories.length > 0 &&
+                    Math.random() > 0.5
+                ) {
+
+                    currentLook.push(
+                        randomItem(accessories)
+                    );
+
+                }
+
+
+                // FALLBACK
+
+                if (currentLook.length === 0) {
+
+                    currentLook.push(
+                        randomItem(clothes)
+                    );
+
+                }
+
+
+                renderGeneratedLook();
+
+
+                showNotification(
+
+                    "✦",
+
+                    "Look perfeito encontrado!"
+
+                );
+
+
+            }, 1200);
+
+        }
+
+
+        // =====================================
+        // FILTRAR ESTILO
+        // =====================================
+
+        function filterByStyle(
+            array,
+            selectedStyle
+        ) {
+
+
+            const filtered =
+                array.filter((item) => {
+
+                    return (
+                        item.style === selectedStyle
+                    );
+
+                });
+
+
+            return filtered.length > 0
+
+                ?
+
+                filtered
+
+                :
+
+                array;
+
+        }
+
+
+        // =====================================
+        // ITEM ALEATÓRIO
+        // =====================================
+
+        function randomItem(array) {
+
+            return array[
+
+                Math.floor(
+
+                    Math.random() *
+                    array.length
+
+                )
+
+            ];
+
+        }
+
+
+        // =====================================
+        // MOSTRAR LOOK
+        // =====================================
+
+        function renderGeneratedLook() {
+
+
+            lookDisplay.innerHTML = "";
+
+
+            const lookContainer =
+                document.createElement("div");
+
+
+            lookContainer.classList.add(
+                "generated-look"
+            );
+
+
+            currentLook.forEach((item) => {
+
+
+                const lookItem =
+                    document.createElement("div");
+
+
+                lookItem.classList.add(
+                    "look-item"
+                );
+
+
+                const icon =
+                    categoryIcons[item.category] || "👕";
+
+
+                lookItem.innerHTML = `
+
+                    ${
+
+                        item.image
+
+                        ?
+
+                        `<img src="${item.image}" alt="${item.name}">`
+
+                        :
+
+                        `<div class="look-placeholder">
+
+                            ${icon}
+
+                        </div>`
+
+                    }
+
+
+                    <h4>
+
+                        ${item.name}
+
+                    </h4>
+
+
+                    <p>
+
+                        ${item.category}
+
+                    </p>
+
+                `;
+
+
+                lookContainer.appendChild(
+                    lookItem
+                );
+
+            });
+
+
+            lookDisplay.appendChild(
+                lookContainer
+            );
+
+        }
+
+
+        // =====================================
+        // SALVAR LOOK
+        // =====================================
+
+        saveLookButton.addEventListener(
+            "click",
+            saveCurrentLook
+        );
+
+
+        function saveCurrentLook() {
+
+
+            if (currentLook.length === 0) {
+
+
+                showNotification(
+
+                    "⚠",
+
+                    "Gere um look antes de salvar!"
+
+                );
+
+
+                return;
+
+            }
+
+
+            const newFavorite = {
+
+                id: Date.now(),
+
+                occasion:
+                    occasion.value,
+
+                style:
+                    style.value,
+
+                clothes:
+                    currentLook
+
+            };
+
+
+            favorites.push(
+                newFavorite
+            );
+
+
+            localStorage.setItem(
+
+                "smartClosetFavorites",
+
+                JSON.stringify(favorites)
+
+            );
+
+
+            renderFavorites();
+
+
+            showNotification(
+
+                "♥",
+
+                "Look salvo nos favoritos!"
+
+            );
+
+        }
+
+
+        // =====================================
+        // MOSTRAR FAVORITOS
+        // =====================================
+
+        function renderFavorites() {
+
+
+            favoritesGrid.innerHTML = "";
+
+
+            if (favorites.length === 0) {
+
+
+                favoritesGrid.innerHTML = `
+
+                    <div class="empty-closet">
+
+                        <div style="font-size:60px;margin-bottom:15px;">
+
+                            ♥
+
+                        </div>
+
+                        <h3>
+
+                            NENHUM LOOK SALVO
+
+                        </h3>
+
+                        <p>
+
+                            Seus looks favoritos aparecerão aqui.
+
+                        </p>
+
+                    </div>
+
+                `;
+
+
+                return;
+
+            }
+
+
+            favorites.forEach((favorite) => {
+
+
+                const card =
+                    document.createElement("div");
+
+
+                card.classList.add(
+                    "favorite-look"
+                );
+
+
+                card.innerHTML = `
+
+                    <h3>
+
+                        LOOK SALVO
+
+                    </h3>
+
+
+                    <p style="color:#8d99b5;font-size:10px;margin-top:5px;">
+
+                        ${favorite.occasion}
+                        •
+                        ${favorite.style}
+
+                    </p>
+
+
+                    <div class="favorite-items">
+
+                        ${favorite.clothes.map((item) => {
+
+
+                            const icon =
+                                categoryIcons[item.category] || "👕";
+
+
+                            return `
+
+                                <div class="favorite-mini">
+
+                                    ${
+
+                                        item.image
+
+                                        ?
+
+                                        `<img src="${item.image}" alt="${item.name}">`
